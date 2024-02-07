@@ -11,9 +11,10 @@ const CreateContent = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
+  const [completed, setCompleted] = useState(false);
   const [important, setImportant] = useState(false);
 
-  const { theme, allTasks, closeModal, editTask } = useGlobalState();
+  const { theme, allTasks, closeModal } = useGlobalState();
 
   const handleChange = (name: string) => (e: any) => {
     switch (name) {
@@ -25,6 +26,9 @@ const CreateContent = () => {
         break;
       case "date":
         setDate(e.target.value);
+        break;
+      case "completed":
+        setCompleted(e.target.checked);
         break;
       case "important":
         setImportant(e.target.checked);
@@ -41,7 +45,7 @@ const CreateContent = () => {
       title,
       description,
       date,
-      completed: false,
+      completed,
       important,
     };
 
@@ -51,13 +55,14 @@ const CreateContent = () => {
       if (res.data.error) {
         toast.error(res.data.error);
       }
+
       if (!res.data.error) {
-        toast.success("Task created successfully");
+        toast.success("Task created successfully.");
         allTasks();
         closeModal();
       }
     } catch (error) {
-      toast.error("Something went wrong");
+      toast.error("Something went wrong.");
       console.log(error);
     }
   };
@@ -98,6 +103,16 @@ const CreateContent = () => {
         />
       </div>
       <div className="input-control toggler">
+        <label htmlFor="completed">Toggle Completed</label>
+        <input
+          value={completed.toString()}
+          onChange={handleChange("completed")}
+          type="checkbox"
+          name="completed"
+          id="completed"
+        />
+      </div>
+      <div className="input-control toggler">
         <label htmlFor="important">Toggle Important</label>
         <input
           value={important.toString()}
@@ -107,6 +122,7 @@ const CreateContent = () => {
           id="important"
         />
       </div>
+
       <div className="submit-btn flex justify-end">
         <Button
           type="submit"
@@ -116,12 +132,12 @@ const CreateContent = () => {
           borderRad={"0.8rem"}
           fw={"500"}
           fs={"1.2rem"}
-          background={theme.colorPrimary}
+          background="#27AE60"
         />
       </div>
     </CreateContentStyled>
   );
-};
+}
 
 const CreateContentStyled = styled.form`
   > h1 {
