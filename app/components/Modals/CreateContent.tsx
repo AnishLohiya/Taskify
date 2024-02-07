@@ -11,10 +11,9 @@ const CreateContent = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
-  const [completed, setCompleted] = useState(false);
   const [important, setImportant] = useState(false);
 
-  const { theme, allTasks, closeModal } = useGlobalState();
+  const { theme, allTasks, closeModal, editTask } = useGlobalState();
 
   const handleChange = (name: string) => (e: any) => {
     switch (name) {
@@ -26,9 +25,6 @@ const CreateContent = () => {
         break;
       case "date":
         setDate(e.target.value);
-        break;
-      case "completed":
-        setCompleted(e.target.checked);
         break;
       case "important":
         setImportant(e.target.checked);
@@ -45,7 +41,7 @@ const CreateContent = () => {
       title,
       description,
       date,
-      completed,
+      completed: false,
       important,
     };
 
@@ -99,16 +95,6 @@ const CreateContent = () => {
           type="date"
           name="date"
           id="date"
-        />
-      </div>
-      <div className="input-control toggler">
-        <label htmlFor="completed">Toggle Completed</label>
-        <input
-          value={completed.toString()}
-          onChange={handleChange("completed")}
-          type="checkbox"
-          name="completed"
-          id="completed"
         />
       </div>
       <div className="input-control toggler">
