@@ -20,16 +20,37 @@ export const GlobalProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
   const theme = themes[selectedTheme];
 
-  const openModal = () => {
-    setModal(true);
-  };
+  // const openModal = () => {
+  //   setModal(true);
+  // };
 
   const collapsedMenu = () => {
     setCollapsed(!collapsed);
   };
 
-  const closeModal = () => {
-    setModal(false);
+  // const closeModal = () => {
+  //   setModal(false);
+  // };
+
+  const [isModal1Open, setModal1Open] = useState(false);
+  const [isModal2Open, setModal2Open] = useState(false);
+  const [taskData, setTaskData] = useState({});
+
+  const openModal = (modalId, taskData) => {
+    if (modalId === "addTask") {
+      setModal1Open(true);
+    } else if (modalId === "editTask") {
+      setModal2Open(true);
+      setTaskData(taskData);
+    }
+  };
+
+  const closeModal = (modalId) => {
+    if (modalId === "addTask") {
+      setModal1Open(false);
+    } else if (modalId === "editTask") {
+      setModal2Open(false);
+    }
   };
 
   const allTasks = async () => {
@@ -99,6 +120,9 @@ export const GlobalProvider = ({ children }) => {
         allTasks,
         collapsed,
         collapsedMenu,
+        isModal1Open,
+        isModal2Open,
+        taskData,
       }}
     >
       <GlobalUpdateContext.Provider value={setSelectedTheme}>

@@ -1,20 +1,52 @@
 "use client";
 import { useGlobalState } from "@/app/context/globalProvider";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import styled from "styled-components";
 import Button from "../Button/Button";
 import { add } from "@/app/utils/Icons";
 
-const CreateContent = () => {
+interface UpdateContentProps {
+  taskToUpdate?: {
+    id: string;
+    title: string;
+    description: string;
+    date: string;
+    isCompleted: boolean;
+    isImportant: boolean;
+  };
+}
+
+const UpdateContent = ({ taskToUpdate }: UpdateContentProps) => {
+  const [id, setId] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
-  const [completed, setCompleted] = useState(false);
-  const [important, setImportant] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [isImportant, setIsImportant] = useState(false);
 
   const { theme, allTasks, closeModal } = useGlobalState();
+
+  useEffect(() => {
+    if (taskToUpdate) {
+      setId(taskToUpdate.id || "");
+      setTitle(taskToUpdate.title || "");
+      setDescription(taskToUpdate.description || "");
+      setDate(taskToUpdate.date || "");
+      setIsCompleted(taskToUpdate.isCompleted || false);  
+      setIsImportant(taskToUpdate.isImportant || false);
+
+        console.log(taskToUpdate);
+    } else {
+      setId("");
+      setTitle("");
+      setDescription("");
+      setDate("");
+      setIsCompleted(false);
+      setIsImportant(false);
+    }
+  }, [taskToUpdate]);
 
   const handleChange = (name: string) => (e: any) => {
     switch (name) {
@@ -28,48 +60,48 @@ const CreateContent = () => {
         setDate(e.target.value);
         break;
       case "completed":
-        setCompleted(e.target.checked);
+        setIsCompleted(e.target.checked);
         break;
       case "important":
-        setImportant(e.target.checked);
+        setIsImportant(e.target.checked);
         break;
       default:
         break;
     }
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const task = {
+    const taskData = {
+      id,
       title,
       description,
       date,
-      completed,
-      important,
+      isCompleted,
+      isImportant,
     };
-
+    console.log(taskData);
     try {
-      const res = await axios.post("/api/tasks", task);
+      const res = await axios.put(`/api/tasks/update`, taskData);
 
+      console.log(res.data);
       if (res.data.error) {
         toast.error(res.data.error);
-      }
-
-      if (!res.data.error) {
-        toast.success("Task created successfully.");
+      } else {
+        toast.success("Task updated successfully");
         allTasks();
-        closeModal("addTask");
+        closeModal("editTask");
       }
     } catch (error) {
-      toast.error("Something went wrong.");
+      toast.error("Something went wrong");
       console.log(error);
     }
   };
 
   return (
-    <CreateContentStyled onSubmit={handleSubmit} theme={theme}>
-      <h1>Create a Task</h1>
+    <UpdateContentStyled onSubmit={handleSubmit} theme={theme}>
+      <h1>Edit a Task</h1>
       <div className="input-control">
         <label htmlFor="title">Title</label>
         <input
@@ -105,7 +137,8 @@ const CreateContent = () => {
       <div className="input-control toggler">
         <label htmlFor="completed">Toggle Completed</label>
         <input
-          value={completed.toString()}
+          checked={isCompleted}
+          value={isCompleted.toString()}
           onChange={handleChange("completed")}
           type="checkbox"
           name="completed"
@@ -115,7 +148,8 @@ const CreateContent = () => {
       <div className="input-control toggler">
         <label htmlFor="important">Toggle Important</label>
         <input
-          value={important.toString()}
+          checked={isImportant}
+          value={isImportant.toString()}
           onChange={handleChange("important")}
           type="checkbox"
           name="important"
@@ -126,7 +160,7 @@ const CreateContent = () => {
       <div className="submit-btn flex justify-end">
         <Button
           type="submit"
-          name="Create Task"
+          name="Edit Task"
           icon={add}
           padding={"0.8rem 2rem"}
           borderRad={"0.8rem"}
@@ -135,11 +169,11 @@ const CreateContent = () => {
           background="#27AE60"
         />
       </div>
-    </CreateContentStyled>
+    </UpdateContentStyled>
   );
-}
+};
 
-const CreateContentStyled = styled.form`
+const UpdateContentStyled = styled.form`
   > h1 {
     font-size: clamp(1.2rem, 5vw, 1.6rem);
     font-weight: 600;
@@ -218,4 +252,4 @@ const CreateContentStyled = styled.form`
   }
 `;
 
-export default CreateContent;
+export default UpdateContent;

@@ -11,7 +11,7 @@ const Modal = ({ content }: Props) => {
   const { theme, closeModal } = useGlobalState();
   return (
     <ModalStyled theme={theme}>
-    <div className="modal-overlay" onClick={closeModal}></div>
+    <div className="modal-overlay" onClick={() => closeModal("editTask") || closeModal("addTask")}></div>
     <div className="modal-content">{content}</div>
   </ModalStyled>
   );

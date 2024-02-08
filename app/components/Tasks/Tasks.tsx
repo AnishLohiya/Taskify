@@ -13,11 +13,11 @@ interface Props {
 }
 
 const Tasks = ({ title, tasks }: Props) => {
-  const { theme, openModal, modal } = useGlobalState();
+  const { theme, openModal, isModal1Open } = useGlobalState();
 
   return (
     <TaskStyled theme={theme}>
-      {modal && <Modal content={<CreateContent />} />}
+      {isModal1Open && <Modal content={<CreateContent />} />}
       <h1>{title}</h1>
         <div className="tasks grid">
         {tasks.map((task) => (
@@ -27,10 +27,11 @@ const Tasks = ({ title, tasks }: Props) => {
             description={task.description}
             date={task.date}
             isCompleted={task.isCompleted}
+            isImportant={task.isImportant}
             id={task.id}
           />
         ))}
-        <button className="create-task" onClick={openModal}>
+        <button className="create-task" onClick={() => openModal("addTask")}>
             {plus}
             Add New Task
         </button>
